@@ -460,3 +460,8 @@
     </script>
 </body>
 </html>
+        setInterval(updateClock, 1000);
+        renderCalendar();
+    </script>
+</body>
+</html>
