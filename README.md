@@ -11,7 +11,7 @@
             padding: 20px;
             background: linear-gradient(135deg, #ffefba, #ffffff);
             position: relative;
-            overflow: hidden;
+            /* Removed overflow: hidden; */
         }
         body::before {
             content: '';
@@ -418,50 +418,4 @@
             }
         });
 
-        document.getElementById('resetCustomTimer').addEventListener('click', () => {
-            resetTimer('custom');
-        });
-
-        function startTimer(type, duration) {
-            let remainingTime = duration;
-
-            const displayId = type === 'pomodoro' ? 'pomodoroTimerDisplay' :
-                             type === 'break' ? 'breakTimerDisplay' : 'customTimerDisplay';
-
-            clearInterval(window[`${type}Timer`]);
-
-            window[`${type}Timer`] = setInterval(() => {
-                if (remainingTime <= 0) {
-                    clearInterval(window[`${type}Timer`]);
-                    document.getElementById('timerEndSound').play();
-                    alert(`${type.charAt(0).toUpperCase() + type.slice(1)} time is up!`);
-                } else {
-                    remainingTime--;
-                    const mins = Math.floor(remainingTime / 60);
-                    const secs = remainingTime % 60;
-                    document.getElementById(displayId).innerText = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-                }
-            }, 1000);
-        }
-
-        function resetTimer(type) {
-            clearInterval(window[`${type}Timer`]);
-            if (type === 'pomodoro') {
-                document.getElementById('pomodoroTimerDisplay').innerText = '25:00';
-            } else if (type === 'break') {
-                document.getElementById('breakTimerDisplay').innerText = '05:00';
-            } else if (type === 'custom') {
-                document.getElementById('customTimerDisplay').innerText = '00:00';
-            }
-        }
-
-        setInterval(updateClock, 1000);
-        renderCalendar();
-    </script>
-</body>
-</html>
-        setInterval(updateClock, 1000);
-        renderCalendar();
-    </script>
-</body>
-</html>
+        document.getElementById('resetCustom
