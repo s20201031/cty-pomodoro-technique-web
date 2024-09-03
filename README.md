@@ -9,65 +9,83 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 20px;
-            background-color: #ffffff; /* White background */
-            color: #000000; /* Black text */
+            background: linear-gradient(135deg, #ffefba, #ffffff);
+            position: relative;
+            overflow: hidden;
         }
-        h1 {
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://www.transparenttextures.com/patterns/white-paper.png');
+            opacity: 0.1;
+            z-index: 0;
+        }
+        h1, h2, h3 {
+            color: #333;
+            z-index: 1;
+        }
+        #clock, .session-count, .notification {
             text-align: center;
-            color: #000; /* Black color for the heading */
+            color: #333;
+            z-index: 1;
         }
-        #clock {
-            text-align: center;
-            font-size: 2em;
-            margin-bottom: 20px;
-            color: #000; /* Black color for the clock */
-        }
-        .session-count {
-            text-align: center;
-            font-size: 1.2em;
-            color: #000; /* Black color for session count */
-        }
-        .settings {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
+        .settings, .timers, .todo, .habits, .calendar {
+            margin: 20px 0;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 10px;
+            border-radius: 8px;
+            z-index: 1;
         }
         .timer {
             margin: 10px 0;
             display: flex;
-            justify-content: space-between;
-            background-color: rgba(240, 240, 240, 0.9); /* Light gray background for timers */
-            padding: 10px;
-            border-radius: 8px;
+            flex-direction: column;
+            align-items: center;
         }
-        .todo, .habits, .links-box, .calendar {
-            margin: 20px 0;
-            background-color: rgba(240, 240, 240, 0.9); /* Light gray background */
-            padding: 10px;
-            border-radius: 8px;
+        .timer-display {
+            font-size: 24px;
+            margin: 10px 0;
         }
         .todo-zone {
             display: flex;
-            flex-direction: column; /* Stack rows vertically */
-            gap: 10px; /* Space between rows */
+            flex-wrap: wrap;
+            gap: 20px;
         }
-        .todo-row {
+        .todo-box {
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            width: 48%;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
         textarea {
-            width: 100%; /* Make the textarea full width */
-            height: 100px; /* Maintain the height */
-            padding: 10px; /* Optional: add padding for aesthetics */
-            box-sizing: border-box; /* Include padding in the width calculation */
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            box-sizing: border-box;
         }
-        .timer-display {
-            font-size: 1.5em;
+        .task-list {
+            margin-top: 5px;
+            list-style-type: none;
+            padding: 0;
         }
-        .calendar-header {
+        .task-list li {
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
+            padding: 5px;
+            border-bottom: 1px solid #ccc;
+        }
+        .completed {
+            text-decoration: line-through;
+            color: gray;
         }
         .calendar-grid {
             display: grid;
@@ -76,29 +94,21 @@
             margin-top: 10px;
         }
         .calendar-day {
-            background-color: #ffffff; /* White background for calendar days */
+            background-color: #ffffff;
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
             position: relative;
-            cursor: pointer; /* Change cursor to pointer */
+            cursor: pointer;
         }
-        .calendar-day.completed {
-            background-color: #c8e6c9; /* Light green for completed tasks */
+        .today {
+            background-color: #ffeb3b; /* Highlight color for today's date */
+            font-weight: bold;
         }
-        .task-list {
-            margin-top: 5px;
-            list-style-type: none;
-            padding: 0;
-        }
-        .notification {
-            text-align: center;
-            font-size: 1.2em;
-            color: #ff0000; /* Red color for notifications */
-            margin-top: 10px;
+        .modal-overlay, .event-modal {
+            display: none;
         }
         .modal-overlay {
-            display: none;
             position: fixed;
             top: 0;
             left: 0;
@@ -108,7 +118,6 @@
             z-index: 5;
         }
         .event-modal {
-            display: none;
             position: fixed;
             top: 50%;
             left: 50%;
@@ -118,28 +127,6 @@
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
             z-index: 10;
-        }
-        .event-list {
-            margin-top: 10px;
-            list-style-type: none;
-            padding: 0;
-        }
-        .event-list li {
-            cursor: pointer;
-            padding: 5px;
-            border-bottom: 1px solid #ccc;
-        }
-        .links-box {
-            text-align: center;
-        }
-        .links-box a {
-            display: block;
-            margin: 5px 0;
-            color: #007bff; /* Bootstrap primary color */
-            text-decoration: none;
-        }
-        .links-box a:hover {
-            text-decoration: underline;
         }
     </style>
 </head>
@@ -161,30 +148,56 @@
     </div>
 
     <div class="timers">
+        <h2>Timers</h2>
         <div class="timer">
-            <input type="number" class="timerInput" placeholder="Enter time in minutes" />
-            <button class="startTimer">Start Timer</button>
-            <button class="endTimer">End Timer</button>
-            <button class="resetTimer">Reset Timer</button>
-            <div class="timer-display">00:00</div>
+            <h3>Pomodoro Timer</h3>
+            <div class="timer-display" id="pomodoroTimerDisplay">25:00</div>
+            <button id="startPomodoro">Start Pomodoro</button>
+            <button id="resetPomodoro">Reset Pomodoro</button>
         </div>
-        <!-- Repeat timer as needed -->
+        <div class="timer">
+            <h3>Break Timer</h3>
+            <div class="timer-display" id="breakTimerDisplay">05:00</div>
+            <button id="startBreak">Start Break</button>
+            <button id="resetBreak">Reset Break</button>
+        </div>
+        <div class="timer">
+            <h3>Custom Timer</h3>
+            <input type="number" id="customTimerInput" placeholder="Enter minutes" />
+            <div class="timer-display" id="customTimerDisplay">00:00</div>
+            <button id="startCustomTimer">Start Custom Timer</button>
+            <button id="resetCustomTimer">Reset Custom Timer</button>
+        </div>
     </div>
 
     <div class="todo">
         <h2>To-Do List</h2>
         <div class="todo-zone">
-            <div class="todo-row">
-                <textarea placeholder="緊急不重要" id="urgentNotImportant"></textarea>
+            <div class="todo-box">
+                <h3>重要且緊急</h3>
+                <textarea placeholder="Enter important and urgent tasks..." id="urgentImportantInput"></textarea>
+                <button id="addUrgentImportant">Add</button>
+                <ul id="urgentImportantList" class="task-list"></ul>
             </div>
-            <div class="todo-row">
-                <textarea placeholder="緊急且重要" id="urgentImportant"></textarea>
+            <div class="todo-box">
+                <h3>緊急不重要</h3>
+                <textarea placeholder="Enter urgent but not important tasks..." id="urgentNotImportantInput"></textarea>
+                <button id="addUrgentNotImportant">Add</button>
+                <ul id="urgentNotImportantList" class="task-list"></ul>
             </div>
-            <div class="todo-row">
-                <textarea placeholder="重要不緊急" id="importantNotUrgent"></textarea>
+            <div class="todo-box">
+                <h3>重要不緊急</h3>
+                <textarea placeholder="Enter important but not urgent tasks..." id="importantNotUrgentInput"></textarea>
+                <button id="addImportantNotUrgent">Add</button>
+                <ul id="importantNotUrgentList" class="task-list"></ul>
+            </div>
+            <div class="todo-box">
+                <h3>不重要不緊急</h3>
+                <textarea placeholder="Enter not important and not urgent tasks..." id="notImportantNotUrgentInput"></textarea>
+                <button id="addNotImportantNotUrgent">Add</button>
+                <ul id="notImportantNotUrgentList" class="task-list"></ul>
             </div>
         </div>
-        <button id="addTasks">Add Tasks to Calendar</button>
     </div>
 
     <div class="habits">
@@ -193,6 +206,7 @@
     </div>
 
     <div class="calendar">
+        <h2>Calendar</h2>
         <div class="calendar-header">
             <button id="prevMonth">Previous</button>
             <h2 id="currentMonth">September 2024</h2>
@@ -213,31 +227,28 @@
         <ul class="event-list" id="eventList"></ul>
     </div>
 
-    <!-- Links Section -->
-    <div class="links-box">
-        <h2>Useful Links</h2>
-        <a href="https://dictionary.cambridge.org/" target="_blank">Cambridge Dictionary</a>
-        <a href="https://www.youtube.com/" target="_blank">YouTube</a>
-        <a href="https://web.whatsapp.com/" target="_blank">WhatsApp Web</a>
-    </div>
-
     <script>
         let currentDate = new Date();
         let sessionCount = 0;
         document.getElementById('sessionCount').innerText = sessionCount;
 
-        // Store events
-        let events = {};
+        // Timer variables
+        let pomodoroTimer, breakTimer, customTimer;
+        let pomodoroTime = 25 * 60; // 25 minutes
+        let breakTime = 5 * 60; // 5 minutes
+        let customTime = 0;
 
-        // Function to update clock
+        let events = {};
+        let completedTasks = [];
+
         function updateClock() {
             const now = new Date();
-            const options = { timeZone: 'Asia/Hong_Kong', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+            const options = { timeZone: 'Asia/Hong_Kong', hour: '2-digit', minute: '2-digit', second: '2-digit', year: 'numeric', month: 'numeric', day: 'numeric' };
             const timeString = now.toLocaleTimeString('en-US', options);
-            document.getElementById('clock').innerText = timeString;
+            const dateString = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+            document.getElementById('clock').innerHTML = `${timeString}<br>${dateString}`;
         }
 
-        // Function to render the calendar
         function renderCalendar() {
             const month = currentDate.getMonth();
             const year = currentDate.getFullYear();
@@ -247,11 +258,9 @@
             const calendarGrid = document.getElementById('calendarGrid');
             const currentMonthDisplay = document.getElementById('currentMonth');
 
-            // Clear the current grid
             calendarGrid.innerHTML = '';
             currentMonthDisplay.innerText = `${firstDay.toLocaleString('default', { month: 'long' })} ${year}`;
 
-            // Fill the days in the grid
             for (let i = 1; i < firstDay.getDay(); i++) {
                 calendarGrid.innerHTML += '<div class="calendar-day"></div>'; // Empty cells for days before the first
             }
@@ -265,7 +274,6 @@
                     </div>`;
             }
 
-            // Attach click event to calendar days to show events
             document.querySelectorAll('.calendar-day').forEach(day => {
                 day.addEventListener('click', () => {
                     const date = day.getAttribute('data-date');
@@ -274,27 +282,47 @@
             });
         }
 
-        // Function to add tasks to the calendar
-        document.getElementById('addTasks').addEventListener('click', () => {
-            const urgentNotImportant = document.getElementById('urgentNotImportant').value;
-            const urgentImportant = document.getElementById('urgentImportant').value;
-            const importantNotUrgent = document.getElementById('importantNotUrgent').value;
-            const tasks = [urgentNotImportant, urgentImportant, importantNotUrgent].filter(Boolean);
-            const date = `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()}`;
-            const taskList = document.getElementById(`tasks-${date}`);
+        function addTask(listId, inputId) {
+            const taskInput = document.getElementById(inputId);
+            const taskText = taskInput.value.trim();
+            if (taskText) {
+                const taskList = document.getElementById(listId);
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <input type="checkbox" class="task-checkbox" />
+                    <span>${taskText}</span>
+                `;
+                li.querySelector('.task-checkbox').onclick = () => toggleTaskCompletion(taskText, li);
+                taskList.appendChild(li);
+                taskInput.value = ''; // Clear the input
+            }
+        }
 
-            // Clear existing tasks
-            taskList.innerHTML = '';
+        document.getElementById('addUrgentImportant').addEventListener('click', () => addTask('urgentImportantList', 'urgentImportantInput'));
+        document.getElementById('addUrgentNotImportant').addEventListener('click', () => addTask('urgentNotImportantList', 'urgentNotImportantInput'));
+        document.getElementById('addImportantNotUrgent').addEventListener('click', () => addTask('importantNotUrgentList', 'importantNotUrgentInput'));
+        document.getElementById('addNotImportantNotUrgent').addEventListener('click', () => addTask('notImportantNotUrgentList', 'notImportantNotUrgentInput'));
 
-            tasks.forEach(task => {
+        function toggleTaskCompletion(task, li) {
+            li.classList.toggle('completed');
+            if (li.classList.contains('completed')) {
+                completedTasks.push(task);
+            } else {
+                completedTasks = completedTasks.filter(t => t !== task);
+            }
+            updateCompletedTasksDisplay();
+        }
+
+        function updateCompletedTasksDisplay() {
+            const completedTasksList = document.getElementById('completedTasks');
+            completedTasksList.innerHTML = '';
+            completedTasks.forEach(task => {
                 const li = document.createElement('li');
                 li.textContent = task;
-                li.onclick = () => editTask(li);
-                taskList.appendChild(li);
+                completedTasksList.appendChild(li);
             });
-        });
+        }
 
-        // Function to show the event modal
         function showEventModal(date) {
             const modal = document.getElementById('eventModal');
             const overlay = document.getElementById('modalOverlay');
@@ -302,11 +330,9 @@
             const eventDescription = document.getElementById('eventDescription');
             const eventList = document.getElementById('eventList');
 
-            // Reset modal fields
             eventTitle.value = '';
             eventDescription.value = '';
 
-            // Load existing events for the date
             eventList.innerHTML = '';
             if (events[date]) {
                 events[date].forEach((event, index) => {
@@ -320,18 +346,15 @@
             modal.style.display = 'block';
             overlay.style.display = 'block';
 
-            // Save event listener
             document.getElementById('saveEvent').onclick = () => saveEvent(date);
             document.getElementById('cancelEvent').onclick = closeEventModal;
         }
 
-        // Function to close the event modal
         function closeEventModal() {
             document.getElementById('eventModal').style.display = 'none';
             document.getElementById('modalOverlay').style.display = 'none';
         }
 
-        // Function to save event
         function saveEvent(date) {
             const title = document.getElementById('eventTitle').value;
             const description = document.getElementById('eventDescription').value;
@@ -350,18 +373,15 @@
             renderCalendar();
         }
 
-        // Function to edit an existing event
         function editEvent(date, index) {
             const event = events[date][index];
             document.getElementById('eventTitle').value = event.title;
             document.getElementById('eventDescription').value = event.description;
 
-            // Remove the event from the list and save updated information
             events[date].splice(index, 1);
             showEventModal(date);
         }
 
-        // Navigation buttons for the calendar
         document.getElementById('prevMonth').addEventListener('click', () => {
             currentDate.setMonth(currentDate.getMonth() - 1);
             renderCalendar();
@@ -372,74 +392,71 @@
             renderCalendar();
         });
 
-        // Timer functionality (with start, end, and reset)
-        const timers = document.querySelectorAll('.timer');
-        timers.forEach(timer => {
-            const input = timer.querySelector('.timerInput');
-            const startButton = timer.querySelector('.startTimer');
-            const endButton = timer.querySelector('.endTimer');
-            const resetButton = timer.querySelector('.resetTimer');
-            const display = timer.querySelector('.timer-display');
-            const notificationDisplay = document.getElementById('notification'); // Notification element
-            let timerInterval;
-            let remainingTime = 0;
+        document.getElementById('startPomodoro').addEventListener('click', () => {
+            startTimer('pomodoro', pomodoroTime);
+        });
 
-            // Start Timer
-            startButton.addEventListener('click', () => {
-                const minutes = parseInt(input.value);
-                if (isNaN(minutes) || minutes <= 0) {
-                    alert('Please enter a valid number of minutes.');
-                    return;
-                }
+        document.getElementById('resetPomodoro').addEventListener('click', () => {
+            resetTimer('pomodoro');
+        });
 
-                remainingTime = minutes * 60; // Convert to seconds
-                clearInterval(timerInterval);
-                updateDisplay();
-                notificationDisplay.innerText = `Timer started for ${minutes} minutes.`; // Visual notification
+        document.getElementById('startBreak').addEventListener('click', () => {
+            startTimer('break', breakTime);
+        });
 
-                timerInterval = setInterval(() => {
-                    if (remainingTime <= 0) {
-                        clearInterval(timerInterval);
-                        sessionCount++;
-                        document.getElementById('sessionCount').innerText = sessionCount;
-                        alert('Timer is up!');
-                        document.getElementById('timerEndSound').play(); // Play the sound when the timer ends
-                        notificationDisplay.innerText = 'Time is up!'; // Visual notification
-                        display.innerText = '00:00';
-                    } else {
-                        remainingTime--;
-                        updateDisplay();
-                    }
-                }, 1000);
-            });
+        document.getElementById('resetBreak').addEventListener('click', () => {
+            resetTimer('break');
+        });
 
-            // End Timer
-            endButton.addEventListener('click', () => {
-                clearInterval(timerInterval);
-                notificationDisplay.innerText = 'Timer paused.'; // Visual notification
-            });
-
-            // Reset Timer
-            resetButton.addEventListener('click', () => {
-                clearInterval(timerInterval);
-                remainingTime = 0;
-                display.innerText = '00:00';
-                input.value = ''; // Clear input
-                notificationDisplay.innerText = ''; // Clear notifications
-            });
-
-            // Function to update the display
-            function updateDisplay() {
-                const mins = Math.floor(remainingTime / 60);
-                const secs = remainingTime % 60;
-                display.innerText = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        document.getElementById('startCustomTimer').addEventListener('click', () => {
+            const input = document.getElementById('customTimerInput').value;
+            if (input) {
+                customTime = input * 60; // Convert to seconds
+                startTimer('custom', customTime);
+            } else {
+                alert('Please enter a valid number of minutes for the custom timer.');
             }
         });
 
-        // Initial calls
+        document.getElementById('resetCustomTimer').addEventListener('click', () => {
+            resetTimer('custom');
+        });
+
+        function startTimer(type, duration) {
+            let remainingTime = duration;
+
+            const displayId = type === 'pomodoro' ? 'pomodoroTimerDisplay' :
+                             type === 'break' ? 'breakTimerDisplay' : 'customTimerDisplay';
+
+            clearInterval(window[`${type}Timer`]);
+
+            window[`${type}Timer`] = setInterval(() => {
+                if (remainingTime <= 0) {
+                    clearInterval(window[`${type}Timer`]);
+                    document.getElementById('timerEndSound').play();
+                    alert(`${type.charAt(0).toUpperCase() + type.slice(1)} time is up!`);
+                } else {
+                    remainingTime--;
+                    const mins = Math.floor(remainingTime / 60);
+                    const secs = remainingTime % 60;
+                    document.getElementById(displayId).innerText = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+                }
+            }, 1000);
+        }
+
+        function resetTimer(type) {
+            clearInterval(window[`${type}Timer`]);
+            if (type === 'pomodoro') {
+                document.getElementById('pomodoroTimerDisplay').innerText = '25:00';
+            } else if (type === 'break') {
+                document.getElementById('breakTimerDisplay').innerText = '05:00';
+            } else if (type === 'custom') {
+                document.getElementById('customTimerDisplay').innerText = '00:00';
+            }
+        }
+
         setInterval(updateClock, 1000);
-        updateClock(); // Initial call
-        renderCalendar(); // Render the calendar
+        renderCalendar();
     </script>
 </body>
 </html>
