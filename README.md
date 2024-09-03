@@ -1,32 +1,31 @@
-# cty-pomodoro-technique-web
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pomodoro Technique with Calendar</title>
+    <title>Pomodoro Technique Tracker</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 20px;
-            background-color: #add8e6; /* Light blue background */
-            color: #333;
+            background-color: #ffffff; /* White background */
+            color: #000000; /* Black text */
         }
         h1 {
             text-align: center;
-            color: #fff; /* Change to white for better contrast */
+            color: #000; /* Black color for the heading */
         }
         #clock {
             text-align: center;
             font-size: 2em;
             margin-bottom: 20px;
-            color: #fff; /* Change to white for better contrast */
+            color: #000; /* Black color for the clock */
         }
         .session-count {
             text-align: center;
             font-size: 1.2em;
-            color: #fff; /* Change to white for better contrast */
+            color: #000; /* Black color for session count */
         }
         .settings {
             display: flex;
@@ -37,13 +36,13 @@
             margin: 10px 0;
             display: flex;
             justify-content: space-between;
-            background-color: rgba(255, 255, 255, 0.8);
+            background-color: rgba(240, 240, 240, 0.9); /* Light gray background for timers */
             padding: 10px;
             border-radius: 8px;
         }
-        .todo, .habits {
+        .todo, .habits, .links-box, .calendar {
             margin: 20px 0;
-            background-color: rgba(255, 255, 255, 0.8);
+            background-color: rgba(240, 240, 240, 0.9); /* Light gray background */
             padding: 10px;
             border-radius: 8px;
         }
@@ -65,9 +64,6 @@
         .timer-display {
             font-size: 1.5em;
         }
-        .calendar {
-            margin-top: 20px;
-        }
         .calendar-header {
             display: flex;
             justify-content: space-between;
@@ -80,7 +76,7 @@
             margin-top: 10px;
         }
         .calendar-day {
-            background-color: #fff;
+            background-color: #ffffff; /* White background for calendar days */
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
@@ -95,20 +91,21 @@
             list-style-type: none;
             padding: 0;
         }
-        .task-list li {
-            cursor: pointer;
-        }
-        .edit-input {
-            display: none;
-            width: 100%;
-            padding: 5px;
-            margin-top: 5px;
-        }
         .notification {
             text-align: center;
             font-size: 1.2em;
             color: #ff0000; /* Red color for notifications */
             margin-top: 10px;
+        }
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 5;
         }
         .event-modal {
             display: none;
@@ -122,16 +119,6 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
             z-index: 10;
         }
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 5;
-        }
         .event-list {
             margin-top: 10px;
             list-style-type: none;
@@ -142,12 +129,7 @@
             padding: 5px;
             border-bottom: 1px solid #ccc;
         }
-        /* New styles for the links box */
         .links-box {
-            background-color: rgba(255, 255, 255, 0.8);
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 20px;
             text-align: center;
         }
         .links-box a {
@@ -162,11 +144,10 @@
     </style>
 </head>
 <body>
-
     <h1>Pomodoro Technique Tracker</h1>
     <div id="clock"></div>
     <div class="session-count">Sessions Completed: <span id="sessionCount">0</span></div>
-    <div class="notification" id="notification"></div> <!-- Notification area -->
+    <div class="notification" id="notification"></div>
 
     <div class="settings">
         <label>
@@ -187,27 +168,7 @@
             <button class="resetTimer">Reset Timer</button>
             <div class="timer-display">00:00</div>
         </div>
-        <div class="timer">
-            <input type="number" class="timerInput" placeholder="Enter time in minutes" />
-            <button class="startTimer">Start Timer</button>
-            <button class="endTimer">End Timer</button>
-            <button class="resetTimer">Reset Timer</button>
-            <div class="timer-display">00:00</div>
-        </div>
-        <div class="timer">
-            <input type="number" class="timerInput" placeholder="Enter time in minutes" />
-            <button class="startTimer">Start Timer</button>
-            <button class="endTimer">End Timer</button>
-            <button class="resetTimer">Reset Timer</button>
-            <div class="timer-display">00:00</div>
-        </div>
-        <div class="timer">
-            <input type="number" class="timerInput" placeholder="Enter time in minutes" />
-            <button class="startTimer">Start Timer</button>
-            <button class="endTimer">End Timer</button>
-            <button class="resetTimer">Reset Timer</button>
-            <div class="timer-display">00:00</div>
-        </div>
+        <!-- Repeat timer as needed -->
     </div>
 
     <div class="todo">
@@ -240,7 +201,7 @@
         <div class="calendar-grid" id="calendarGrid"></div>
     </div>
 
-    <audio id="timerEndSound" src="https://www.soundjay.com/button/beep-07.wav"></audio> <!-- Sound alert -->
+    <audio id="timerEndSound" src="https://www.soundjay.com/button/beep-07.wav"></audio>
 
     <div class="modal-overlay" id="modalOverlay"></div>
     <div class="event-modal" id="eventModal">
@@ -480,6 +441,5 @@
         updateClock(); // Initial call
         renderCalendar(); // Render the calendar
     </script>
-
 </body>
 </html>
