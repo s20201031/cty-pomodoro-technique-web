@@ -11,7 +11,6 @@
             padding: 20px;
             background: linear-gradient(135deg, #ffefba, #ffffff);
             position: relative;
-            /* Removed overflow: hidden; */
         }
         body::before {
             content: '';
@@ -418,4 +417,61 @@
             }
         });
 
-        document.getElementById('resetCustom
+        document.getElementById('resetCustomTimer').addEventListener('click', () => {
+            resetTimer('custom');
+        });
+
+        function startTimer(type, duration) {
+            let time = duration;
+            const display = document.getElementById(`${type}TimerDisplay`);
+
+            clearInterval(pomodoroTimer);
+            clearInterval(breakTimer);
+            clearInterval(customTimer);
+
+            const timer = setInterval(() => {
+                const minutes = Math.floor(time / 60);
+                const seconds = time % 60;
+                display.innerText = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                time--;
+
+                if (time < 0) {
+                    clearInterval(timer);
+                    document.getElementById('timerEndSound').play();
+                    if (type === 'pomodoro') {
+                        sessionCount++;
+                        document.getElementById('sessionCount').innerText = sessionCount;
+                    }
+                    resetTimer(type);
+                }
+            }, 1000);
+
+            if (type === 'pomodoro') {
+                pomodoroTimer = timer;
+            } else if (type === 'break') {
+                breakTimer = timer;
+            } else {
+                customTimer = timer;
+            }
+        }
+
+        function resetTimer(type) {
+            clearInterval(pomodoroTimer);
+            clearInterval(breakTimer);
+            clearInterval(customTimer);
+            if (type === 'pomodoro') {
+                document.getElementById('pomodoroTimerDisplay').innerText = '25:00';
+            } else if (type === 'break') {
+                document.getElementById('breakTimerDisplay').innerText = '05:00';
+            } else {
+                document.getElementById('customTimerDisplay').innerText = '00:00';
+            }
+        }
+
+        // Initial Render
+        renderCalendar();
+        updateClock();
+        setInterval(updateClock, 1000);
+    </script>
+</body>
+</html>
