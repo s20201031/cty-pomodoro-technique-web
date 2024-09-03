@@ -9,9 +9,7 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 20px;
-            background-image: url('https://example.com/cute-cats.jpg'); /* Replace with your image URL */
-            background-size: cover; /* Cover the entire background */
-            background-position: center; /* Center the image */
+            background-color: #add8e6; /* Light blue background */
             color: #333;
         }
         h1 {
@@ -143,6 +141,23 @@
             padding: 5px;
             border-bottom: 1px solid #ccc;
         }
+        /* New styles for the links box */
+        .links-box {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .links-box a {
+            display: block;
+            margin: 5px 0;
+            color: #007bff; /* Bootstrap primary color */
+            text-decoration: none;
+        }
+        .links-box a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -234,6 +249,14 @@
         <button id="saveEvent">Save Event</button>
         <button id="cancelEvent">Cancel</button>
         <ul class="event-list" id="eventList"></ul>
+    </div>
+
+    <!-- Links Section -->
+    <div class="links-box">
+        <h2>Useful Links</h2>
+        <a href="https://dictionary.cambridge.org/" target="_blank">Cambridge Dictionary</a>
+        <a href="https://www.youtube.com/" target="_blank">YouTube</a>
+        <a href="https://web.whatsapp.com/" target="_blank">WhatsApp Web</a>
     </div>
 
     <script>
