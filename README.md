@@ -188,8 +188,7 @@
             <button id="resetCustomTimer">Reset Custom Timer</button>
         </div>
     </div>
-
-    <div class="todo">
+        <div class="todo">
         <h2>To-Do List</h2>
         <div class="todo-zone">
             <div class="todo-box">
@@ -218,7 +217,6 @@
             </div>
         </div>
     </div>
-
     <div class="habits">
         <h2>Habits to Achieve</h2>
         <textarea placeholder="Enter habits here..." id="habitsText"></textarea>
@@ -260,7 +258,15 @@
 
         function updateClock() {
             const now = new Date();
-            const options = { timeZone: 'Asia/Hong_Kong', hour: '2-digit', minute: '2-digit', second: '2-digit', year: 'numeric', month: 'numeric', day: 'numeric' };
+            const options = {
+                timeZone: 'Asia/Hong_Kong',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                year: 'numeric',
+                month: 'numeric',
+                day: 'numeric'
+            };
             const timeString = now.toLocaleTimeString('en-US', options);
             const dateString = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
             document.getElementById('clock').innerHTML = `${timeString}<br>${dateString}`;
@@ -398,43 +404,12 @@
             renderCalendar();
         });
 
-        document.getElementById('startPomodoro').addEventListener('click', () => {
-            startTimer('pomodoro', pomodoroTime);
-        });
-
-        document.getElementById('resetPomodoro').addEventListener('click', () => {
-            resetTimer('pomodoro');
-        });
-
-        document.getElementById('startBreak').addEventListener('click', () => {
-            startTimer('break', breakTime);
-        });
-
-        document.getElementById('resetBreak').addEventListener('click', () => {
-            resetTimer('break');
-        });
-
-        document.getElementById('startCustomTimer').addEventListener('click', () => {
-            const input = document.getElementById('customTimerInput').value;
-            if (input) {
-                customTime = input * 60; // Convert to seconds
-                startTimer('custom', customTime);
-            } else {
-                alert('Please enter a valid number of minutes for the custom timer.');
-            }
-        });
-
-        document.getElementById('resetCustomTimer').addEventListener('click', () => {
-            resetTimer('custom');
-        });
-
         function startTimer(type, duration) {
             let time = duration;
             const display = document.getElementById(`${type}TimerDisplay`);
             clearInterval(pomodoroTimer);
             clearInterval(breakTimer);
             clearInterval(customTimer);
-
             const timer = setInterval(() => {
                 const minutes = Math.floor(time / 60);
                 const seconds = time % 60;
@@ -475,10 +450,54 @@
             }
         }
 
-        // Initial Render
-        renderCalendar();
+        // Event listeners for timer buttons
+        const startPomodoroButton = document.getElementById('startPomodoro');
+        startPomodoroButton.addEventListener('click', () => {
+            startTimer('pomodoro', pomodoroTime);
+        });
+        startPomodoroButton.addEventListener('touchstart', () => {
+            startTimer('pomodoro', pomodoroTime);
+        });
+
+        document.getElementById('resetPomodoro').addEventListener('click', () => {
+            resetTimer('pomodoro');
+        });
+        document.getElementById('resetPomodoro').addEventListener('touchstart', () => {
+            resetTimer('pomodoro');
+        });
+
+        document.getElementById('startBreak').addEventListener('click', () => {
+            startTimer('break', breakTime);
+        });
+        document.getElementById('startBreak').addEventListener('touchstart', () => {
+            startTimer('break', breakTime);
+        });
+
+        document.getElementById('resetBreak').addEventListener('click', () => {
+            resetTimer('break');
+        });
+        document.getElementById('resetBreak').addEventListener('touchstart', () => {
+            resetTimer('break');
+        });
+
+        document.getElementById('startCustomTimer').addEventListener('click', () => {
+            const input = document.getElementById('customTimerInput').value;
+                        const input = document.getElementById('customTimerInput').value;
+            if (input) {
+                customTime = input * 60; // Convert minutes to seconds
+                startTimer('custom', customTime);
+            } else {
+                alert('Please enter a valid number of minutes.');
+            }
+        });
+
+        document.getElementById('resetCustomTimer').addEventListener('click', () => {
+            resetTimer('custom');
+        });
+
         updateClock();
-        setInterval(updateClock, 1000);
+        setInterval(updateClock, 1000); // Update clock every second
+        renderCalendar(); // Initial render of calendar
     </script>
 </body>
 
