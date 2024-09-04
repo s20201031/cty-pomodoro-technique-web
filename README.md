@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,6 +13,7 @@
             background: linear-gradient(135deg, #ffefba, #ffffff);
             position: relative;
         }
+
         body::before {
             content: '';
             position: absolute;
@@ -23,15 +25,18 @@
             opacity: 0.1;
             z-index: 0;
         }
+
         h1, h2, h3 {
             color: #333;
             z-index: 1;
         }
+
         #clock, .session-count, .notification {
             text-align: center;
             color: #333;
             z-index: 1;
         }
+
         .settings, .timers, .todo, .habits, .calendar {
             margin: 20px 0;
             background-color: rgba(255, 255, 255, 0.9);
@@ -39,21 +44,25 @@
             border-radius: 8px;
             z-index: 1;
         }
+
         .timer {
             margin: 10px 0;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
+
         .timer-display {
             font-size: 24px;
             margin: 10px 0;
         }
+
         .todo-zone {
             display: flex;
             flex-wrap: wrap;
             gap: 20px;
         }
+
         .todo-box {
             display: flex;
             flex-direction: column;
@@ -64,17 +73,20 @@
             width: 48%;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
+
         textarea {
             width: 100%;
             height: 100px;
             padding: 10px;
             box-sizing: border-box;
         }
+
         .task-list {
             margin-top: 5px;
             list-style-type: none;
             padding: 0;
         }
+
         .task-list li {
             display: flex;
             align-items: center;
@@ -82,16 +94,19 @@
             padding: 5px;
             border-bottom: 1px solid #ccc;
         }
+
         .completed {
             text-decoration: line-through;
             color: gray;
         }
+
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
             gap: 5px;
             margin-top: 10px;
         }
+
         .calendar-day {
             background-color: #ffffff;
             padding: 10px;
@@ -100,13 +115,16 @@
             position: relative;
             cursor: pointer;
         }
+
         .today {
             background-color: #ffeb3b; /* Highlight color for today's date */
             font-weight: bold;
         }
+
         .modal-overlay, .event-modal {
             display: none;
         }
+
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -116,6 +134,7 @@
             background: rgba(0, 0, 0, 0.5);
             z-index: 5;
         }
+
         .event-modal {
             position: fixed;
             top: 50%;
@@ -129,6 +148,7 @@
         }
     </style>
 </head>
+
 <body>
     <h1>Pomodoro Technique Tracker</h1>
     <div id="clock"></div>
@@ -215,7 +235,6 @@
     </div>
 
     <audio id="timerEndSound" src="https://www.soundjay.com/button/beep-07.wav"></audio>
-
     <div class="modal-overlay" id="modalOverlay"></div>
     <div class="event-modal" id="eventModal">
         <h3>Create/Edit Event</h3>
@@ -236,7 +255,6 @@
         let pomodoroTime = 25 * 60; // 25 minutes
         let breakTime = 5 * 60; // 5 minutes
         let customTime = 0;
-
         let events = {};
         let completedTasks = [];
 
@@ -256,19 +274,18 @@
             const daysInMonth = lastDay.getDate();
             const calendarGrid = document.getElementById('calendarGrid');
             const currentMonthDisplay = document.getElementById('currentMonth');
-
             calendarGrid.innerHTML = '';
             currentMonthDisplay.innerText = `${firstDay.toLocaleString('default', { month: 'long' })} ${year}`;
 
             for (let i = 1; i < firstDay.getDay(); i++) {
                 calendarGrid.innerHTML += '<div class="calendar-day"></div>'; // Empty cells for days before the first
             }
+
             for (let day = 1; day <= daysInMonth; day++) {
                 const dateString = `${year}-${month + 1}-${day}`;
                 const isToday = new Date().toDateString() === new Date(dateString).toDateString();
                 calendarGrid.innerHTML += `
-                    <div class="calendar-day ${isToday ? 'today' : ''}" data-date="${dateString}">
-                        ${day}
+                    <div class="calendar-day ${isToday ? 'today' : ''}" data-date="${dateString}">${day}
                         <ul class="task-list" id="tasks-${dateString}"></ul>
                     </div>`;
             }
@@ -287,16 +304,14 @@
             if (taskText) {
                 const taskList = document.getElementById(listId);
                 const li = document.createElement('li');
-                li.innerHTML = `
-                    <input type="checkbox" class="task-checkbox" />
-                    <span>${taskText}</span>
-                `;
+                li.innerHTML = `<input type="checkbox" class="task-checkbox" /><span>${taskText}</span>`;
                 li.querySelector('.task-checkbox').onclick = () => toggleTaskCompletion(taskText, li);
                 taskList.appendChild(li);
                 taskInput.value = ''; // Clear the input
             }
         }
 
+        // Event listeners for adding tasks
         document.getElementById('addUrgentImportant').addEventListener('click', () => addTask('urgentImportantList', 'urgentImportantInput'));
         document.getElementById('addUrgentNotImportant').addEventListener('click', () => addTask('urgentNotImportantList', 'urgentNotImportantInput'));
         document.getElementById('addImportantNotUrgent').addEventListener('click', () => addTask('importantNotUrgentList', 'importantNotUrgentInput'));
@@ -328,10 +343,8 @@
             const eventTitle = document.getElementById('eventTitle');
             const eventDescription = document.getElementById('eventDescription');
             const eventList = document.getElementById('eventList');
-
             eventTitle.value = '';
             eventDescription.value = '';
-
             eventList.innerHTML = '';
             if (events[date]) {
                 events[date].forEach((event, index) => {
@@ -341,10 +354,8 @@
                     eventList.appendChild(li);
                 });
             }
-
             modal.style.display = 'block';
             overlay.style.display = 'block';
-
             document.getElementById('saveEvent').onclick = () => saveEvent(date);
             document.getElementById('cancelEvent').onclick = closeEventModal;
         }
@@ -357,16 +368,13 @@
         function saveEvent(date) {
             const title = document.getElementById('eventTitle').value;
             const description = document.getElementById('eventDescription').value;
-
             if (!title) {
                 alert('Event title is required!');
                 return;
             }
-
             if (!events[date]) {
                 events[date] = [];
             }
-
             events[date].push({ title, description });
             closeEventModal();
             renderCalendar();
@@ -376,7 +384,6 @@
             const event = events[date][index];
             document.getElementById('eventTitle').value = event.title;
             document.getElementById('eventDescription').value = event.description;
-
             events[date].splice(index, 1);
             showEventModal(date);
         }
@@ -424,7 +431,6 @@
         function startTimer(type, duration) {
             let time = duration;
             const display = document.getElementById(`${type}TimerDisplay`);
-
             clearInterval(pomodoroTimer);
             clearInterval(breakTimer);
             clearInterval(customTimer);
@@ -459,6 +465,7 @@
             clearInterval(pomodoroTimer);
             clearInterval(breakTimer);
             clearInterval(customTimer);
+
             if (type === 'pomodoro') {
                 document.getElementById('pomodoroTimerDisplay').innerText = '25:00';
             } else if (type === 'break') {
@@ -474,4 +481,5 @@
         setInterval(updateClock, 1000);
     </script>
 </body>
+
 </html>
